@@ -13,6 +13,7 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- script: ls
-- script: dotnet build 'SimpleApi\SimpleApi\SimpleApi.csproj' --configuration $(buildConfiguration)
+- script: dotnet build 'SimpleApi\SimpleApi.Core\SimpleApi.Core.csproj' --configuration $(buildConfiguration)
+- script: dotnet build 'SimpleApi\SimpleApi.Infrastructure\SimpleApi.Infrastructure.csproj' --configuration $(buildConfiguration)
+- script: dotnet build 'SimpleApi\SimpleApi.Api\SimpleApi.Api.csproj' --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
