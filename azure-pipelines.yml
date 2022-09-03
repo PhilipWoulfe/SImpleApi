@@ -13,5 +13,6 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+- script: ls
 - script: dotnet build 'SimpleApi\SimpleApi\SimpleApi\SimpleApi.csproj' --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
