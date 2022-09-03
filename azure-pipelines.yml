@@ -13,16 +13,21 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- script: dotnet build 'SimpleApi\SimpleApi.Core\SimpleApi.Core.csproj' --configuration $(buildConfiguration)
-- script: dotnet build 'SimpleApi\SimpleApi.Infrastructure\SimpleApi.Infrastructure.csproj' --configuration $(buildConfiguration)
-- script: dotnet build 'SimpleApi\SimpleApi.Api\SimpleApi.Api.csproj' --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
-- task: VSTest@2
+
+- task: DotNetCoreCLI@2
   inputs:
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: |
+    command: 'build'
+    projects: |
+      SimpleApi\SimpleApi.Core\SimpleApi.Core.csproj
+      SimpleApi\SimpleApi.Infrastructure\SimpleApi.Infrastructure.csproj
+      SimpleApi\SimpleApi.Api\SimpleApi.Api.csproj
+      SimpleApi\SimpleApi.UnitTests\SimpleApi.UnitTests.csproj
+  displayName: 'dotnet build $(buildConfiguration)'
+  
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: |
       **\*test*.dll
       !**\*TestAdapter.dll
       !**\obj\**
-    searchFolder: '$(System.DefaultWorkingDirectory)'
-    codeCoverageEnabled: true
