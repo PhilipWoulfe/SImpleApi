@@ -17,3 +17,12 @@ steps:
 - script: dotnet build 'SimpleApi\SimpleApi.Infrastructure\SimpleApi.Infrastructure.csproj' --configuration $(buildConfiguration)
 - script: dotnet build 'SimpleApi\SimpleApi.Api\SimpleApi.Api.csproj' --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
+- task: VSTest@2
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: |
+      **\*test*.dll
+      !**\*TestAdapter.dll
+      !**\obj\**
+    searchFolder: '$(System.DefaultWorkingDirectory)'
+    codeCoverageEnabled: true
