@@ -25,20 +25,20 @@ namespace SimpleApi.UnitTests.ControllerTests
         }
 
         [Fact]
-        public void Post_Validation_CantAddSameIsin()
+        public async void Post_Validation_CantAddSameIsin()
         {
-            var result = _controller.Post(new CreateCompanyDTO
+            var result = await _controller.Post(new CreateCompanyDTO
             {
                 Name = It.IsAny<string>(),
                 Exchange = It.IsAny<string>(),
                 StockTicker = It.IsAny<string>(),
                 Isin = "US0378331005"
-            }).Result;
+            });
 
-            var conflictResult = result as ConflictResult;
+            var conflictObjectResult = result as ConflictObjectResult;
 
-            Assert.NotNull(conflictResult);
-            Assert.Equal(409, conflictResult.StatusCode);
+            Assert.NotNull(conflictObjectResult);
+            Assert.Equal(409, conflictObjectResult.StatusCode);
 
         }
 
