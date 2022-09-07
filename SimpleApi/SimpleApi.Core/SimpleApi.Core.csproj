@@ -7,8 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="ProjectAggregate\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
