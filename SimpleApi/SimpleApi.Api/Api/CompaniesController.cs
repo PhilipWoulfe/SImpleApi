@@ -2,6 +2,7 @@
 using SimpleApi.Api.ApiModels;
 using SimpleApi.Core.Interfaces;
 using SimpleApi.Core.ProjectAggregate;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace SimpleApi.Api.Api
 {
@@ -18,35 +19,46 @@ namespace SimpleApi.Api.Api
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            var CompanyDTOs = (_repository.GetAll())
-                .Select(Company => new CompanyDTO
-                {
-                    Id = Company.Id,
-                    Name = Company.Name,
-                    StockTicker = Company.StockTicker,
-                    Exchange = Company.Exchange,
-                    Isin = Company.Isin,
-                    Website = Company.Website
-                })
-                .ToList();
+            var companies = _repository.GetAll();
+            List<CompanyDTO> companyDTOs = new();
 
-            return Ok(CompanyDTOs);
+            if (companies != null)
+            {                
+                companyDTOs.AddRange(companies
+                   .Select(company => new CompanyDTO
+                   {
+                       Id = company.Id,
+                       Name = company.Name,
+                       StockTicker = company.StockTicker,
+                       Exchange = company.Exchange,
+                       Isin = company.Isin,
+                       Website = company.Website
+                   })
+                   .ToList());
+            }
+
+            return Ok(companyDTOs);
         }
 
         // GET: api/Companies
         [HttpGet("{id:Guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var Company = _repository.GetById(id);
+            var company = _repository.GetById(id);
+
+            if (company == null)
+            {
+                return Ok();
+            }
 
             var result = new CompanyDTO
             {
-                Id = Company.Id,
-                Name = Company.Name,
-                StockTicker = Company.StockTicker,
-                Exchange = Company.Exchange,
-                Isin = Company.Isin,
-                Website = Company.Website
+                Id = company.Id,
+                Name = company.Name,
+                StockTicker = company.StockTicker,
+                Exchange = company.Exchange,
+                Isin = company.Isin,
+                Website = company.Website
             };
 
             return Ok(result);

@@ -42,15 +42,61 @@ namespace SimpleApi.UnitTests.ControllerTests
 
         }
 
+        [Fact]
+        public async void GetAll_Validation_ReturnsAll()
+        {
+            var result = await _controller.List();
+
+            Assert.NotNull(result);
+            
+            var objectResult = Assert.IsType<OkObjectResult>(result);
+            var model = Assert.IsAssignableFrom<IEnumerable<CompanyDTO>>(objectResult.Value);
+            Assert.Equal(5, model.Count());
+        }
+
+        [Fact]
+        public async void GetAll_Validation_Returns200OnNoResults()
+        {
+            var result = await _controller.List();
+
+            Assert.NotNull(result);
+
+            var objectResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(200, objectResult.StatusCode);
+        }
+
+        [Fact]
+        public async void GetById_Validation()
+        {
+            var result = await _controller.GetById(new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"));
+
+            Assert.NotNull(result);
+
+            var objectResult = Assert.IsType<OkObjectResult>(result);
+            var model = Assert.IsAssignableFrom<CompanyDTO>(objectResult.Value);
+            Assert.Equal("NASDAQ", model.Exchange);
+        }
+
+        [Fact]
+        public async void GetById_Validation_Returns200OnNoResult()
+        {
+            var result = await _controller.GetById(new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaac"));
+
+            Assert.NotNull(result);
+
+            var objectResult = Assert.IsType<OkResult>(result);
+            Assert.Equal(200, objectResult.StatusCode);
+        }
+
         private void SetUpRepository()
         {
             IList<Company> companies = new List<Company>
             {
-                new Company("Apple Inc.", "NASDAQ", "AAPL", "US0378331005", "http://www.apple.com"),
-                new Company("British Airways Plc", "Pink Sheets", "BAIRY", "US1104193065"),
-                new Company("Heineken NV", "Euronext Amsterdam", "HEIA", "NL0000009165"),
-                new Company("Panasonic Corp", "Tokyo Stock Exchange", "6752", "JP3866800000", "http://www.panasonic.co.jp"),
-                new Company("Porsche Automobil", "Deutsche Börse", "PAH3", "DE000PAH0038", "https://www.porsche.com/")
+                new Company("Apple Inc.", "AAPL", "NASDAQ", "US0378331005", "http://www.apple.com"),
+                new Company("British Airways Plc", "BAIRY", "Pink Sheets", "US1104193065"),
+                new Company("Heineken NV", "HEIA", "Euronext Amsterdam", "NL0000009165"),
+                new Company("Panasonic Corp", "6752", "Tokyo Stock Exchange", "JP3866800000", "http://www.panasonic.co.jp"),
+                new Company("Porsche Automobil", "PAH3", "Deutsche Börse", "DE000PAH0038", "https://www.porsche.com/")
             };
 
 
