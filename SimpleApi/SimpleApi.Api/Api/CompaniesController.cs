@@ -7,9 +7,9 @@ namespace SimpleApi.Api.Api
 {
     public class CompaniesController : BaseApiController
     {
-        private readonly IGenericRepository<Company> _repository;
+        private readonly ICompanyRepository _repository;
 
-        public CompaniesController(IGenericRepository<Company> repository)
+        public CompaniesController(ICompanyRepository repository)
         {
             _repository = repository;
         }
@@ -57,6 +57,11 @@ namespace SimpleApi.Api.Api
         public async Task<IActionResult> Post([FromBody] CreateCompanyDTO request)
         {
             var newCompany = new Company(request.Name, request.StockTicker, request.Exchange, request.Isin, request.Website);
+
+            if (_repository.GetByIsin(request.Isin) != null)
+            {
+                return Conflict($"Company already exists with Isin: {request.Isin}");
+            }
 
             var createdCompany = _repository.Add(newCompany);
 

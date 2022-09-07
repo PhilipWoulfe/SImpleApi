@@ -4,7 +4,7 @@ namespace SimpleApi.Core.ProjectAggregate
 {
     public class Company : BaseEntity
     {
-        public Company (string name, string stockTicker, string exchange, string isin, string? website)
+        public Company (string name, string stockTicker, string exchange, string isin, string? website = null)
         {
             Name = name;
             StockTicker = stockTicker;
