@@ -14,5 +14,15 @@ namespace SimpleApi.Infrastructure.Data.Repositories
         {
             return _dbContext.Companies.SingleOrDefault(c => c.Isin == isin);
         }
+
+        public Company Update(Company companyToUpdate, Company updatedCompany)
+        {
+            companyToUpdate.UpdateCompany(updatedCompany);
+            
+            _dbContext.Companies.Update(companyToUpdate);
+            _dbContext.SaveChanges();
+
+            return companyToUpdate;
+        }
     }
 }

@@ -13,6 +13,15 @@ namespace SimpleApi.Core.ProjectAggregate
             Website = website;
         }
 
+        public void UpdateCompany(Company company)
+        {
+            Name = company.Name;
+            StockTicker = company.StockTicker;
+            Exchange = company.Exchange;
+            Isin = company.Isin;
+            Website = company.Website;
+        }
+
         public string Name { get; private set; } 
 
         public string StockTicker { get; private set; }

@@ -56,24 +56,8 @@ namespace SimpleApi.UnitTests.ControllerTests
                 StockTicker = "zz",
                 Isin = "zz"
             });
-
-            var objectResult = result as BadRequestObjectResult;
-
-            Assert.NotNull(objectResult);
-            Assert.Equal(400, objectResult.StatusCode);
-            Assert.NotNull(objectResult.Value);
-            
-            var valRes = objectResult.Value as List<ValidationFailure>;
-            var valResStr = new List<String>();
-            
-            Assert.NotNull(valRes);
-            
-            foreach (var val in valRes)
-            {
-                valResStr.Add(val.ToString());
-            }
-            
-            Assert.Contains<string>("'Name' must not be empty.", valResStr);
+                       
+            ValidateResults(result, "'Name' must not be empty.");
         }
 
         [Fact]
@@ -87,23 +71,7 @@ namespace SimpleApi.UnitTests.ControllerTests
                 Isin = "zz"
             });
 
-            var objectResult = result as BadRequestObjectResult;
-
-            Assert.NotNull(objectResult);
-            Assert.Equal(400, objectResult.StatusCode);
-            Assert.NotNull(objectResult.Value);
-
-            var valRes = objectResult.Value as List<ValidationFailure>;
-            var valResStr = new List<String>();
-
-            Assert.NotNull(valRes);
-
-            foreach (var val in valRes)
-            {
-                valResStr.Add(val.ToString());
-            }
-
-            Assert.Contains<string>("'Name' must not be empty.", valResStr);
+            ValidateResults(result, "'Name' must not be empty.");            
         }
 
         [Fact]
@@ -117,23 +85,7 @@ namespace SimpleApi.UnitTests.ControllerTests
                 Isin = "zz"
             });
 
-            var objectResult = result as BadRequestObjectResult;
-
-            Assert.NotNull(objectResult);
-            Assert.Equal(400, objectResult.StatusCode);
-            Assert.NotNull(objectResult.Value);
-
-            var valRes = objectResult.Value as List<ValidationFailure>;
-            var valResStr = new List<String>();
-
-            Assert.NotNull(valRes);
-
-            foreach (var val in valRes)
-            {
-                valResStr.Add(val.ToString());
-            }
-
-            Assert.Contains<string>("'Exchange' must not be empty.", valResStr);
+            ValidateResults(result, "'Exchange' must not be empty.");
         }
 
         [Fact]
@@ -147,23 +99,7 @@ namespace SimpleApi.UnitTests.ControllerTests
                 Isin = "zz"
             });
 
-            var objectResult = result as BadRequestObjectResult;
-
-            Assert.NotNull(objectResult);
-            Assert.Equal(400, objectResult.StatusCode);
-            Assert.NotNull(objectResult.Value);
-
-            var valRes = objectResult.Value as List<ValidationFailure>;
-            var valResStr = new List<String>();
-
-            Assert.NotNull(valRes);
-
-            foreach (var val in valRes)
-            {
-                valResStr.Add(val.ToString());
-            }
-
-            Assert.Contains<string>("'Exchange' must not be empty.", valResStr);
+            ValidateResults(result, "'Exchange' must not be empty.");
         }
 
         [Fact]
@@ -177,23 +113,7 @@ namespace SimpleApi.UnitTests.ControllerTests
                 Isin = "zz"
             });
 
-            var objectResult = result as BadRequestObjectResult;
-
-            Assert.NotNull(objectResult);
-            Assert.Equal(400, objectResult.StatusCode);
-            Assert.NotNull(objectResult.Value);
-
-            var valRes = objectResult.Value as List<ValidationFailure>;
-            var valResStr = new List<String>();
-
-            Assert.NotNull(valRes);
-
-            foreach (var val in valRes)
-            {
-                valResStr.Add(val.ToString());
-            }
-
-            Assert.Contains<string>("'Stock Ticker' must not be empty.", valResStr);
+            ValidateResults(result, "'Stock Ticker' must not be empty.");
         }
 
         [Fact]
@@ -207,23 +127,7 @@ namespace SimpleApi.UnitTests.ControllerTests
                 Isin = "zz"
             });
 
-            var objectResult = result as BadRequestObjectResult;
-
-            Assert.NotNull(objectResult);
-            Assert.Equal(400, objectResult.StatusCode);
-            Assert.NotNull(objectResult.Value);
-
-            var valRes = objectResult.Value as List<ValidationFailure>;
-            var valResStr = new List<String>();
-
-            Assert.NotNull(valRes);
-
-            foreach (var val in valRes)
-            {
-                valResStr.Add(val.ToString());
-            }
-
-            Assert.Contains<string>("'Stock Ticker' must not be empty.", valResStr);
+            ValidateResults(result, "'Stock Ticker' must not be empty.");
         }
 
 
@@ -238,23 +142,7 @@ namespace SimpleApi.UnitTests.ControllerTests
                 Isin = null
             });
 
-            var objectResult = result as BadRequestObjectResult;
-
-            Assert.NotNull(objectResult);
-            Assert.Equal(400, objectResult.StatusCode);
-            Assert.NotNull(objectResult.Value);
-
-            var valRes = objectResult.Value as List<ValidationFailure>;
-            var valResStr = new List<String>();
-
-            Assert.NotNull(valRes);
-
-            foreach (var val in valRes)
-            {
-                valResStr.Add(val.ToString());
-            }
-
-            Assert.Contains<string>("'Isin' must not be empty.", valResStr);
+            ValidateResults(result, "'Isin' must not be empty.");
         }
 
         [Fact]
@@ -268,23 +156,7 @@ namespace SimpleApi.UnitTests.ControllerTests
                 Isin = ""
             });
 
-            var objectResult = result as BadRequestObjectResult;
-
-            Assert.NotNull(objectResult);
-            Assert.Equal(400, objectResult.StatusCode);
-            Assert.NotNull(objectResult.Value);
-
-            var valRes = objectResult.Value as List<ValidationFailure>;
-            var valResStr = new List<String>();
-
-            Assert.NotNull(valRes);
-
-            foreach (var val in valRes)
-            {
-                valResStr.Add(val.ToString());
-            }
-
-            Assert.Contains<string>("'Isin' must not be empty.", valResStr);
+            ValidateResults(result, "'Isin' must not be empty.");
         }
 
         [Fact]
@@ -298,6 +170,168 @@ namespace SimpleApi.UnitTests.ControllerTests
                 Isin = "12ABCDERS"
             });
 
+            ValidateResults(result, "'Isin' is not in the correct format.");           
+        }
+
+
+
+        [Fact]
+        public async void Put_Validation_CantAddSameIsin()
+        {
+            var result = await _controller.Put(new CompanyDTO
+            {
+                Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                Name = It.IsAny<string>(),
+                Exchange = It.IsAny<string>(),
+                StockTicker = It.IsAny<string>(),
+                Isin = "US0378331005"
+            });
+
+            var conflictObjectResult = result as ConflictObjectResult;
+
+            Assert.NotNull(conflictObjectResult);
+            Assert.Equal(409, conflictObjectResult.StatusCode);
+
+        }
+
+        [Fact]
+        public async void Put_Validation_NameCannotBeNull()
+        {
+            var result = await _controller.Put(new CompanyDTO
+            {
+                Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                Name = null,
+                Exchange = "zz",
+                StockTicker = "zz",
+                Isin = "zz"
+            });
+
+            ValidateResults(result, "'Name' must not be empty.");
+        }
+
+        [Fact]
+        public async void Put_Validation_NameCannotBeEmpty()
+        {
+            var result = await _controller.Put(new CompanyDTO
+            {
+                Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                Name = "",
+                Exchange = "zz",
+                StockTicker = "zz",
+                Isin = "zz"
+            });
+
+            ValidateResults(result, "'Name' must not be empty.");
+        }
+
+        [Fact]
+        public async void Put_Validation_ExchangeCannotBeNull()
+        {
+            var result = await _controller.Put(new CompanyDTO
+            {
+                Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                Name = "zz",
+                Exchange = null,
+                StockTicker = "zz",
+                Isin = "zz"
+            });
+
+            ValidateResults(result, "'Exchange' must not be empty.");
+        }
+
+        [Fact]
+        public async void Put_Validation_ExchangeCannotBeEmpty()
+        {
+            var result = await _controller.Put(new CompanyDTO
+            {
+                Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                Name = "zz",
+                Exchange = "",
+                StockTicker = "zz",
+                Isin = "zz"
+            });
+
+            ValidateResults(result, "'Exchange' must not be empty.");
+        }
+
+        [Fact]
+        public async void Put_Validation_StockTickerCannotBeNull()
+        {
+            var result = await _controller.Put(new CompanyDTO
+            {
+                Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                Name = "zz",
+                Exchange = "z",
+                StockTicker = null,
+                Isin = "zz"
+            });
+
+            ValidateResults(result, "'Stock Ticker' must not be empty.");
+        }
+
+        [Fact]
+        public async void Put_Validation_StockTickerCannotBeEmpty()
+        {
+            var result = await _controller.Put(new CompanyDTO
+            {
+                Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                Name = "zz",
+                Exchange = "zz",
+                StockTicker = "",
+                Isin = "zz"
+            });
+
+            ValidateResults(result, "'Stock Ticker' must not be empty.");
+        }
+
+
+        [Fact]
+        public async void Put_Validation_IsinCannotBeNull()
+        {
+            var result = await _controller.Put(new CompanyDTO
+            {
+                Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                Name = "zz",
+                Exchange = "z",
+                StockTicker = "zz",
+                Isin = null
+            });
+
+            ValidateResults(result, "'Isin' must not be empty.");
+        }
+
+        [Fact]
+        public async void Put_Validation_IsinCannotBeEmpty()
+        {
+            var result = await _controller.Put(new CompanyDTO
+            {
+                Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                Name = "zz",
+                Exchange = "zz",
+                StockTicker = "zz",
+                Isin = ""
+            });
+
+            ValidateResults(result, "'Isin' must not be empty.");
+        }
+
+        [Fact]
+        public async void Put_Validation_IsinFormat()
+        {
+            var result = await _controller.Put(new CompanyDTO
+            {
+                Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                Name = "zz",
+                Exchange = "z",
+                StockTicker = "zz",
+                Isin = "12ABCDERS"
+            });
+
+            ValidateResults(result, "'Isin' is not in the correct format.");
+        }
+
+        private void ValidateResults(IActionResult result, string expectedError)
+        {
             var objectResult = result as BadRequestObjectResult;
 
             Assert.NotNull(objectResult);
@@ -305,7 +339,7 @@ namespace SimpleApi.UnitTests.ControllerTests
             Assert.NotNull(objectResult.Value);
 
             var valRes = objectResult.Value as List<ValidationFailure>;
-            var valResStr = new List<String>();
+            var valResStr = new List<string>();
 
             Assert.NotNull(valRes);
 
@@ -314,7 +348,7 @@ namespace SimpleApi.UnitTests.ControllerTests
                 valResStr.Add(val.ToString());
             }
 
-            Assert.Contains<string>("'Isin' is not in the correct format.", valResStr);
+            Assert.Contains<string>(expectedError, valResStr);
         }
 
         [Fact]

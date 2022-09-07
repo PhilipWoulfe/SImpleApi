@@ -101,5 +101,45 @@ namespace SimpleApi.Api.Api
 
             return Ok(result);
         }
+
+        // PUT: api/Companies
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody] CompanyDTO request)
+        {
+            var updatedCompany = new Company(request.Name, request.StockTicker, request.Exchange, request.Isin, request.Website);
+
+            var companyToUpdate = _repository.GetById(request.Id);
+
+            if (companyToUpdate == null)
+            {
+                return NoContent();
+            }
+
+            ValidationResult valResult = await _validator.ValidateAsync(updatedCompany);
+
+            if (_repository.GetByIsin(request.Isin) != null)
+            {
+                return Conflict($"Company already exists with Isin: {request.Isin}");
+            }
+
+            if (!valResult.IsValid)
+            {
+                return BadRequest(valResult.Errors);
+            }
+
+            _repository.Update(companyToUpdate, updatedCompany);
+
+            var result = new CompanyDTO
+            {
+                Id = updatedCompany.Id,
+                Name = updatedCompany.Name,
+                StockTicker = updatedCompany.StockTicker,
+                Exchange = updatedCompany.Exchange,
+                Isin = updatedCompany.Isin,
+                Website = updatedCompany.Website
+            };
+
+            return Ok(result);
+        }
     }
 }
