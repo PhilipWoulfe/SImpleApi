@@ -31,3 +31,9 @@ steps:
       **/*Tests*.dll
       !**\*TestAdapter.dll
       !**\obj\**
+
+- script: dotnet test ./SimpleApi/SimpleApi.UnitTests --logger trx --collect "Code coverage"
+- task: PublishTestResults@2
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'      
