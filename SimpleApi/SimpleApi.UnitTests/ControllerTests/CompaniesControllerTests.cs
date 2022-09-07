@@ -1,11 +1,13 @@
-﻿
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using SimpleApi.Api.Api;
 using SimpleApi.Api.ApiModels;
 using SimpleApi.Core.Interfaces;
 using SimpleApi.Core.ProjectAggregate;
+using SimpleApi.Core.Validators;
+using FluentValidation;
+using FluentValidation.TestHelper;
+using FluentValidation.Results;
 
 namespace SimpleApi.UnitTests.ControllerTests
 {
@@ -14,12 +16,14 @@ namespace SimpleApi.UnitTests.ControllerTests
     {
         private readonly Mock<ICompanyRepository> _mockRepo;
         private readonly CompaniesController _controller;
+        private readonly CompanyValidator _validator;
 
 
         public CompaniesControllerTests()
         {
+            _validator = new CompanyValidator();
             _mockRepo = new Mock<ICompanyRepository>();
-            _controller = new CompaniesController(_mockRepo.Object);
+            _controller = new CompaniesController(_mockRepo.Object, _validator);
             
             SetUpRepository();
         }
@@ -40,6 +44,277 @@ namespace SimpleApi.UnitTests.ControllerTests
             Assert.NotNull(conflictObjectResult);
             Assert.Equal(409, conflictObjectResult.StatusCode);
 
+        }
+
+        [Fact]
+        public async void Post_Validation_NameCannotBeNull()
+        {
+            var result = await _controller.Post(new CreateCompanyDTO
+            {
+                Name = null,
+                Exchange = "zz",
+                StockTicker = "zz",
+                Isin = "zz"
+            });
+
+            var objectResult = result as BadRequestObjectResult;
+
+            Assert.NotNull(objectResult);
+            Assert.Equal(400, objectResult.StatusCode);
+            Assert.NotNull(objectResult.Value);
+            
+            var valRes = objectResult.Value as List<ValidationFailure>;
+            var valResStr = new List<String>();
+            
+            Assert.NotNull(valRes);
+            
+            foreach (var val in valRes)
+            {
+                valResStr.Add(val.ToString());
+            }
+            
+            Assert.Contains<string>("'Name' must not be empty.", valResStr);
+        }
+
+        [Fact]
+        public async void Post_Validation_NameCannotBeEmpty()
+        {
+            var result = await _controller.Post(new CreateCompanyDTO
+            {
+                Name = "",
+                Exchange = "zz",
+                StockTicker = "zz",
+                Isin = "zz"
+            });
+
+            var objectResult = result as BadRequestObjectResult;
+
+            Assert.NotNull(objectResult);
+            Assert.Equal(400, objectResult.StatusCode);
+            Assert.NotNull(objectResult.Value);
+
+            var valRes = objectResult.Value as List<ValidationFailure>;
+            var valResStr = new List<String>();
+
+            Assert.NotNull(valRes);
+
+            foreach (var val in valRes)
+            {
+                valResStr.Add(val.ToString());
+            }
+
+            Assert.Contains<string>("'Name' must not be empty.", valResStr);
+        }
+
+        [Fact]
+        public async void Post_Validation_ExchangeCannotBeNull()
+        {
+            var result = await _controller.Post(new CreateCompanyDTO
+            {
+                Name = "zz",
+                Exchange = null,
+                StockTicker = "zz",
+                Isin = "zz"
+            });
+
+            var objectResult = result as BadRequestObjectResult;
+
+            Assert.NotNull(objectResult);
+            Assert.Equal(400, objectResult.StatusCode);
+            Assert.NotNull(objectResult.Value);
+
+            var valRes = objectResult.Value as List<ValidationFailure>;
+            var valResStr = new List<String>();
+
+            Assert.NotNull(valRes);
+
+            foreach (var val in valRes)
+            {
+                valResStr.Add(val.ToString());
+            }
+
+            Assert.Contains<string>("'Exchange' must not be empty.", valResStr);
+        }
+
+        [Fact]
+        public async void Post_Validation_ExchangeCannotBeEmpty()
+        {
+            var result = await _controller.Post(new CreateCompanyDTO
+            {
+                Name = "zz",
+                Exchange = "",
+                StockTicker = "zz",
+                Isin = "zz"
+            });
+
+            var objectResult = result as BadRequestObjectResult;
+
+            Assert.NotNull(objectResult);
+            Assert.Equal(400, objectResult.StatusCode);
+            Assert.NotNull(objectResult.Value);
+
+            var valRes = objectResult.Value as List<ValidationFailure>;
+            var valResStr = new List<String>();
+
+            Assert.NotNull(valRes);
+
+            foreach (var val in valRes)
+            {
+                valResStr.Add(val.ToString());
+            }
+
+            Assert.Contains<string>("'Exchange' must not be empty.", valResStr);
+        }
+
+        [Fact]
+        public async void Post_Validation_StockTickerCannotBeNull()
+        {
+            var result = await _controller.Post(new CreateCompanyDTO
+            {
+                Name = "zz",
+                Exchange = "z",
+                StockTicker = null,
+                Isin = "zz"
+            });
+
+            var objectResult = result as BadRequestObjectResult;
+
+            Assert.NotNull(objectResult);
+            Assert.Equal(400, objectResult.StatusCode);
+            Assert.NotNull(objectResult.Value);
+
+            var valRes = objectResult.Value as List<ValidationFailure>;
+            var valResStr = new List<String>();
+
+            Assert.NotNull(valRes);
+
+            foreach (var val in valRes)
+            {
+                valResStr.Add(val.ToString());
+            }
+
+            Assert.Contains<string>("'Stock Ticker' must not be empty.", valResStr);
+        }
+
+        [Fact]
+        public async void Post_Validation_StockTickerCannotBeEmpty()
+        {
+            var result = await _controller.Post(new CreateCompanyDTO
+            {
+                Name = "zz",
+                Exchange = "zz",
+                StockTicker = "",
+                Isin = "zz"
+            });
+
+            var objectResult = result as BadRequestObjectResult;
+
+            Assert.NotNull(objectResult);
+            Assert.Equal(400, objectResult.StatusCode);
+            Assert.NotNull(objectResult.Value);
+
+            var valRes = objectResult.Value as List<ValidationFailure>;
+            var valResStr = new List<String>();
+
+            Assert.NotNull(valRes);
+
+            foreach (var val in valRes)
+            {
+                valResStr.Add(val.ToString());
+            }
+
+            Assert.Contains<string>("'Stock Ticker' must not be empty.", valResStr);
+        }
+
+
+        [Fact]
+        public async void Post_Validation_IsinCannotBeNull()
+        {
+            var result = await _controller.Post(new CreateCompanyDTO
+            {
+                Name = "zz",
+                Exchange = "z",
+                StockTicker = "zz",
+                Isin = null
+            });
+
+            var objectResult = result as BadRequestObjectResult;
+
+            Assert.NotNull(objectResult);
+            Assert.Equal(400, objectResult.StatusCode);
+            Assert.NotNull(objectResult.Value);
+
+            var valRes = objectResult.Value as List<ValidationFailure>;
+            var valResStr = new List<String>();
+
+            Assert.NotNull(valRes);
+
+            foreach (var val in valRes)
+            {
+                valResStr.Add(val.ToString());
+            }
+
+            Assert.Contains<string>("'Isin' must not be empty.", valResStr);
+        }
+
+        [Fact]
+        public async void Post_Validation_IsinCannotBeEmpty()
+        {
+            var result = await _controller.Post(new CreateCompanyDTO
+            {
+                Name = "zz",
+                Exchange = "zz",
+                StockTicker = "zz",
+                Isin = ""
+            });
+
+            var objectResult = result as BadRequestObjectResult;
+
+            Assert.NotNull(objectResult);
+            Assert.Equal(400, objectResult.StatusCode);
+            Assert.NotNull(objectResult.Value);
+
+            var valRes = objectResult.Value as List<ValidationFailure>;
+            var valResStr = new List<String>();
+
+            Assert.NotNull(valRes);
+
+            foreach (var val in valRes)
+            {
+                valResStr.Add(val.ToString());
+            }
+
+            Assert.Contains<string>("'Isin' must not be empty.", valResStr);
+        }
+
+        [Fact]
+        public async void Post_Validation_IsinFormat()
+        {
+            var result = await _controller.Post(new CreateCompanyDTO
+            {
+                Name = "zz",
+                Exchange = "z",
+                StockTicker = "zz",
+                Isin = "12ABCDERS"
+            });
+
+            var objectResult = result as BadRequestObjectResult;
+
+            Assert.NotNull(objectResult);
+            Assert.Equal(400, objectResult.StatusCode);
+            Assert.NotNull(objectResult.Value);
+
+            var valRes = objectResult.Value as List<ValidationFailure>;
+            var valResStr = new List<String>();
+
+            Assert.NotNull(valRes);
+
+            foreach (var val in valRes)
+            {
+                valResStr.Add(val.ToString());
+            }
+
+            Assert.Contains<string>("'Isin' is not in the correct format.", valResStr);
         }
 
         [Fact]

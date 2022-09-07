@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
 using SimpleApi.Api.ApiModels;
 using SimpleApi.Core.Interfaces;
 using SimpleApi.Core.ProjectAggregate;
+using System;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace SimpleApi.Api.Api
@@ -9,10 +12,12 @@ namespace SimpleApi.Api.Api
     public class CompaniesController : BaseApiController
     {
         private readonly ICompanyRepository _repository;
+        private IValidator<Company> _validator;
 
-        public CompaniesController(ICompanyRepository repository)
+        public CompaniesController(ICompanyRepository repository, IValidator<Company> validator)
         {
             _repository = repository;
+            _validator = validator;
         }
 
         // GET: api/Companies
@@ -70,9 +75,16 @@ namespace SimpleApi.Api.Api
         {
             var newCompany = new Company(request.Name, request.StockTicker, request.Exchange, request.Isin, request.Website);
 
+            ValidationResult valResult = await _validator.ValidateAsync(newCompany);
+
             if (_repository.GetByIsin(request.Isin) != null)
             {
                 return Conflict($"Company already exists with Isin: {request.Isin}");
+            }
+
+            if (!valResult.IsValid)
+            {
+                return BadRequest(valResult.Errors);
             }
 
             var createdCompany = _repository.Add(newCompany);

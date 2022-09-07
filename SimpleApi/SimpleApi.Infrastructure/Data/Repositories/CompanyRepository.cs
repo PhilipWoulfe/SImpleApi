@@ -12,7 +12,7 @@ namespace SimpleApi.Infrastructure.Data.Repositories
 
         public Company GetByIsin(string isin)
         {
-            return _dbContext.Companies.Single(c => c.Isin == isin);
+            return _dbContext.Companies.SingleOrDefault(c => c.Isin == isin);
         }
     }
 }

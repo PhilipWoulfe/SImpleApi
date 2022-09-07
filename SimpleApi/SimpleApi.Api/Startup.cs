@@ -1,7 +1,12 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.OpenApi.Models;
 using SimpleApi.Core.Interfaces;
+using SimpleApi.Core.ProjectAggregate;
+using SimpleApi.Core.Validators;
 using SimpleApi.Infrastructure;
 using SimpleApi.Infrastructure.Data.Repositories;
+using System;
 
 namespace SimpleApi.Api
 {
@@ -25,6 +30,9 @@ namespace SimpleApi.Api
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddTransient<ICompanyRepository, CompanyRepository>();
             services.AddControllers();
+            
+            services.AddScoped<IValidator<Company>, CompanyValidator>();
+            
 
             services.AddSwaggerGen(c =>
             {
