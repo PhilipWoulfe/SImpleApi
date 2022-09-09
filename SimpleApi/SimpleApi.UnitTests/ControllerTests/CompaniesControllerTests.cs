@@ -397,12 +397,6 @@ namespace SimpleApi.UnitTests.ControllerTests
             Assert.Equal(200, objectResult.StatusCode);
         }
 
-        [Fact]
-        public async void MAkeFakse()
-        {
-            Assert.True(false);
-        }
-
         private void SetUpRepository()
         {
             IList<Company> companies = new List<Company>
