@@ -69,6 +69,31 @@ namespace SimpleApi.Api.Api
             return Ok(result);
         }
 
+
+        // GET: api/Companies
+        [HttpGet("{isin}")]
+        public async Task<IActionResult> GetByIsin(string isin)
+        {
+            var company = _repository.GetByIsin(isin);
+
+            if (company == null)
+            {
+                return Ok();
+            }
+
+            var result = new CompanyDTO
+            {
+                Id = company.Id,
+                Name = company.Name,
+                StockTicker = company.StockTicker,
+                Exchange = company.Exchange,
+                Isin = company.Isin,
+                Website = company.Website
+            };
+
+            return Ok(result);
+        }
+
         // POST: api/Companies
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateCompanyDTO request)
